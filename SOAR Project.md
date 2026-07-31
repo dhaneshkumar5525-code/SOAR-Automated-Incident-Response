@@ -1784,6 +1784,11 @@ Anyone with the path
 
 ### • Starts URL reputation analysis.
 
+### Add API Key from the url scan
+### Create a account in the urlscan.io and navigate to the profile then security and api key section, copy paste in the configuration settings
+<img width="1471" height="940" alt="image" src="https://github.com/user-attachments/assets/5de9c6f9-428d-44e6-bbe3-6cd0b21b877b" />
+
+
 ---
 
 ## Configuration
@@ -1994,6 +1999,10 @@ Delay
 
 ### • Continues the automated investigation workflow.
 
+### Add the same API key from here and connect the template 
+<img width="1471" height="940" alt="image" src="https://github.com/user-attachments/assets/d907feb9-a1f3-436d-9686-29a316661d8f" />
+
+
 ---
 
 ## Configuration
@@ -2103,13 +2112,891 @@ API-Key : INPUT.urlscan_credential
 
 <img width="715" height="741" alt="image" src="https://github.com/user-attachments/assets/e52c4145-94ae-409d-86a4-9fd2a55ff218" />
 
+## Run Script (URL Score)
+
+### Purpose
+
+### The **Run Script** action extracts the overall **URL Score** from the URLScan.io scan results. Instead of passing the complete API response to subsequent actions, this script retrieves only the required score value, making it easier to use in later workflow steps such as threat score calculation and decision-making.
+
+### • Extracts the URLScan overall score.
+
+### • Simplifies the API response.
+
+### • Passes only the required value to downstream actions.
+
+### • Supports automated threat assessment.
+
+---
+
+## Configuration
+
+### **Name**
+
+```text
+Run Script
+```
+
+### Identifies the action responsible for processing the URLScan.io response.
+
+---
+
+### **Description**
+
+```text
+Extracts the URLScan overall score from the scan results for use in threat score calculation and workflow decision-making.
+```
+
+### Explains that the script retrieves the overall URL score from the URLScan.io response.
+
+---
+
+### **Runtime Environment**
+
+```text
+Python 3.13
+```
+
+### Executes the script using the Python 3.13 runtime environment provided by Tines.
+
+---
+
+### **Script**
+
+```python
+def main(input):
+    return {
+        "url_score": input["url_score"]
+    }
+```
+
+### This script receives the URL score as input and returns it as a simplified output object. The extracted value can then be referenced by other workflow actions without navigating the complete URLScan API response.
+
+### • Receives the input value.
+
+### • Extracts the URL score.
+
+### • Returns a simplified output.
+
+### • Makes downstream processing easier.
+
+---
+
+### **Emit Failure Event**
+
+```text
+Always
+```
+
+### Configured to always emit a failure event if the script encounters an error, allowing the workflow to log and troubleshoot execution issues.
+
+---
+
+### **Input**
+
+```json
+{
+  "url_score": "<<retrieve_result_of_scan.body.verdicts.overall.score>>"
+}
+```
+
+### Retrieves the **overall URL score** from the **Retrieve Result of Scan** action and passes it as the input to the Python script.
+
+---
+
+### **Timeout**
+
+```text
+10 Seconds
+```
+
+### Allows the script a maximum of **10 seconds** to complete execution before timing out.
+
+---
+
+### **Requirements**
+
+```text
+requests==2.34.2
+```
+
+### Specifies the required Python package available during script execution. Although this script does not directly use the library, it is included as part of the runtime environment configuration.
+
+---
+
+## **Run Script (URL Score) Configuration**
+<img width="717" height="820" alt="image" src="https://github.com/user-attachments/assets/00d77ea8-6244-4f1c-bf36-b94efefb7e5d" />
+
+<img width="716" height="756" alt="image" src="https://github.com/user-attachments/assets/6f036d23-e2e0-4351-8349-9db9a48458a1" />
+
+## VirusTotal – Get an IP Address Report
+
+### Purpose
+
+### The **Get an IP Address Report** action queries the VirusTotal API using the source IP address received from the Python Alert Generator. VirusTotal analyzes the IP address against its threat intelligence database and returns information such as reputation, malicious detections, community votes, and analysis statistics. These results help determine whether the IP address is associated with malicious activity.
+
+### • Retrieves IP reputation from VirusTotal.
+
+### • Uses the source IP address as the search identifier.
+
+### • Returns detection statistics and reputation information.
+
+### • Supports automated IOC enrichment.
+
+###  Add API key from the virus total and navigate to the profile and API section 
+<img width="1919" height="926" alt="image" src="https://github.com/user-attachments/assets/a0d29af3-b2c8-4eb5-9fca-bb7138f3b19a" />
+
+---
+
+## Configuration
+
+### **Name**
+
+```text
+VirusTotal
+```
+
+### Identifies the integration used to retrieve IP reputation information.
+
+---
+
+### **Action**
+
+```text
+Get an IP address report
+```
+
+### Retrieves the analysis report for the specified IP address from VirusTotal.
+
+---
+
+### **Description**
+
+```text
+Retrieves the VirusTotal analysis report for an IP address to determine its reputation and detection statistics.
+```
+
+### Explains that the action queries VirusTotal using the supplied IP address and returns its associated threat intelligence information.
+
+---
+
+### **Documentation**
+
+```text
+https://docs.virustotal.com/reference/ip-info
+```
+
+### Official VirusTotal API documentation used to configure the IP Address Report API.
+
+---
+
+### **IP**
+
+```text
+webhook.body.details.source_ip
+```
+
+### Retrieves the source IP address from the incoming Webhook payload. This IP address is submitted to VirusTotal for reputation analysis.
+
+---
+
+### **API URL**
+
+```text
+https://www.virustotal.com/api/v3/ip_addresses/{source_ip}
+```
+
+### The API endpoint used to retrieve the reputation and analysis report for the specified IP address.
+
+---
+
+### **Content Type**
+
+```text
+Custom (JSON)
+```
+
+### Configures the request to communicate using JSON.
+
+---
+
+### **Method**
+
+```text
+GET
+```
+
+### Uses the HTTP GET method to retrieve the IP address report from VirusTotal.
+
+---
+
+### **Headers**
+
+```text
+x-apikey : CREDENTIAL.virustotal
+```
+
+### Authenticates the request using the VirusTotal API key securely stored in the Tines Credentials vault.
+
+---
+
+### **Payload**
+
+```json
+{}
+```
+
+### No request body is required because the source IP address is included directly in the API URL.
+
+---
+
+## **VirusTotal IP Address Report Configuration**
+
+<img width="729" height="708" alt="image" src="https://github.com/user-attachments/assets/7239a667-b221-47c0-8937-bf4b626be002" />
+
+<img width="730" height="813" alt="image" src="https://github.com/user-attachments/assets/e4750fe4-8fb9-420c-ad9d-30da62a38a72" />
+
+## Run Script 2 (IP Score)
+
+### Purpose
+
+### The **Run Script 2** action extracts the **malicious detection count** from the VirusTotal IP Address Report. Instead of passing the complete VirusTotal response to later actions, the script returns only the IP score, making it easier to calculate the overall threat score and evaluate the alert.
+
+### • Extracts the VirusTotal IP score.
+
+### • Simplifies the API response.
+
+### • Passes only the required value to downstream actions.
+
+### • Supports threat score calculation and workflow decisions.
+
+---
+
+## Configuration
+
+### **Name**
+
+```text
+Run Script 2
+```
+
+### Identifies the action responsible for extracting the VirusTotal IP score.
+
+---
+
+### **Description**
+
+```text
+Extracts the malicious detection count from the VirusTotal IP Address Report for use in threat score calculation and workflow decision-making.
+```
+
+### Explains that the script retrieves the IP reputation score from the VirusTotal response.
+
+---
+
+### **Runtime Environment**
+
+```text
+Python 3.13
+```
+
+### Executes the script using the Python 3.13 runtime environment provided by Tines.
+
+---
+
+### **Script**
+
+```python
+def main(input):
+    return {
+        "ip_score": input["ip_score"]
+    }
+```
+
+### This script receives the IP score as input and returns it as a simplified output object. The extracted value is then used by later workflow actions to calculate the overall threat score.
+
+### • Receives the input value.
+
+### • Extracts the IP score.
+
+### • Returns a simplified output.
+
+### • Simplifies downstream processing.
+
+---
+
+### **Emit Failure Event**
+
+```text
+Always
+```
+
+### Configured to always emit a failure event if the script encounters an error, allowing failures to be logged and monitored.
+
+---
+
+### **Input**
+
+```json
+{
+  "ip_score": "<<get_an_ip_address_report.body.data.attributes.last_analysis_stats.malicious>>"
+}
+```
+
+### Retrieves the **malicious detection count** from the VirusTotal IP Address Report and passes it to the Python script.
+
+---
+
+### **Timeout**
+
+```text
+10 Seconds
+```
+
+### Allows the script a maximum of **10 seconds** to complete execution before timing out.
+
+---
+
+### **Requirements**
+
+```text
+requests==2.34.2
+```
+
+### Specifies the required Python package available during script execution. Although this script does not directly use the library, it is included as part of the runtime environment configuration.
+
+---
+
+## **Run Script 2 (IP Score) Configuration**
+<img width="730" height="818" alt="image" src="https://github.com/user-attachments/assets/523c8912-cd4b-453e-9523-a2abbebfc1ad" />
+
+<img width="726" height="758" alt="image" src="https://github.com/user-attachments/assets/07a81c96-7e65-4f24-ad31-a996c354fe4e" />
 
 
+## VirusTotal – Get a File Report
+
+### Purpose
+
+### The **Get a File Report** action queries the VirusTotal API using the file hash received from the Python Alert Generator. VirusTotal searches its threat intelligence database and returns detailed information about the file, including detection statistics, reputation, scan results, and other security attributes. These results are later used by the workflow to determine whether the file is malicious or benign.
+
+### • Retrieves file reputation from VirusTotal.
+
+### • Uses the file hash as the search identifier.
+
+### • Returns malware detection statistics.
+
+### • Supports automated threat analysis.
+
+### Add API key from the virus total and navigate to the profile and API section 
+<img width="1919" height="926" alt="image" src="https://github.com/user-attachments/assets/a0d29af3-b2c8-4eb5-9fca-bb7138f3b19a" />
 
 
+---
 
+## Configuration
 
+### **Name**
 
+```text
+VirusTotal
+```
+
+### Identifies the integration used to retrieve file reputation information.
+
+---
+
+### **Action**
+
+```text
+Get a file report
+```
+
+### Retrieves the analysis report for the specified file hash from VirusTotal.
+
+---
+
+### **Description**
+
+```text
+Retrieves the VirusTotal analysis report for a file using its SHA-256 hash to determine its reputation and detection statistics.
+```
+
+### Explains that the action queries VirusTotal using the supplied file hash and returns the associated analysis report.
+
+---
+
+### **Documentation**
+
+```text
+https://docs.virustotal.com/reference/file-info
+```
+
+### Official VirusTotal API documentation used to configure the File Report API.
+
+---
+
+### **ID**
+
+```text
+webhook.body.details.file_hash
+```
+
+### Retrieves the file hash from the incoming Webhook payload. This hash uniquely identifies the file that will be searched in VirusTotal.
+
+---
+
+### **API URL**
+
+```text
+https://www.virustotal.com/api/v3/files/{file_hash}
+```
+
+### The File Report API endpoint used to retrieve the reputation and analysis results for the specified file hash.
+
+---
+
+### **Content Type**
+
+```text
+JSON
+```
+
+### The API exchanges data in JSON format.
+
+---
+
+### **Method**
+
+```text
+GET
+```
+
+### Uses the HTTP GET method to retrieve the file report from VirusTotal.
+
+---
+
+### **Headers**
+
+```text
+x-apikey : CREDENTIAL.virustotal
+```
+
+### Authenticates the request using the VirusTotal API key stored securely in the Tines Credentials vault.
+
+---
+
+### **Payload**
+
+```json
+{}
+```
+
+### No request body is required because the file hash is included in the API URL.
+
+---
+
+### **VirusTotal File Report Configuration**
+<img width="733" height="653" alt="image" src="https://github.com/user-attachments/assets/a4f8a8d6-4e4c-4c7d-be78-7b238932759a" />
+
+<img width="733" height="669" alt="image" src="https://github.com/user-attachments/assets/78e50e40-7ea3-4ba2-8d6d-9990ddb9e192" />
+
+<img width="732" height="137" alt="image" src="https://github.com/user-attachments/assets/7a52ffad-7bf9-44f5-99f2-672588ed398d" />
+
+## Run Script 3 (Hash Score)
+
+### Purpose
+
+### The **Run Script 3** action extracts the **malicious detection count** from the VirusTotal File Report. Instead of passing the complete VirusTotal response to subsequent workflow actions, the script returns only the hash score, making it easier to calculate the overall threat score and determine whether the file is malicious.
+
+### • Extracts the VirusTotal file hash score.
+
+### • Simplifies the API response.
+
+### • Passes only the required value to downstream actions.
+
+### • Supports threat score calculation and workflow decision-making.
+
+---
+
+## Configuration
+
+### **Name**
+
+```text
+Run Script 3
+```
+
+### Identifies the action responsible for extracting the VirusTotal file hash score.
+
+---
+
+### **Description**
+
+```text
+Extracts the malicious detection count from the VirusTotal File Report for use in threat score calculation and workflow decision-making.
+```
+
+### Explains that the script retrieves the file hash reputation score from the VirusTotal response.
+
+---
+
+### **Runtime Environment**
+
+```text
+Python 3.13
+```
+
+### Executes the script using the Python 3.13 runtime environment provided by Tines.
+
+---
+
+### **Script**
+
+```python
+def main(input):
+    return {
+        "hash_score": input["hash_score"]
+    }
+```
+
+### This script receives the hash score as input and returns it as a simplified output object. The extracted value is then used by later workflow actions during threat score calculation and alert classification.
+
+### • Receives the input value.
+
+### • Extracts the hash score.
+
+### • Returns a simplified output.
+
+### • Simplifies downstream processing.
+
+---
+
+### **Emit Failure Event**
+
+```text
+Always
+```
+
+### Configured to always emit a failure event if the script encounters an error, allowing workflow failures to be logged and monitored.
+
+---
+
+### **Input**
+
+```json
+{
+  "hash_score": "<<get_a_file_report.body.data.attributes.last_analysis_stats.malicious>>"
+}
+```
+
+### Retrieves the **malicious detection count** from the VirusTotal File Report and passes it to the Python script.
+
+---
+
+### **Timeout**
+
+```text
+10 Seconds
+```
+
+### Allows the script a maximum of **10 seconds** to complete execution before timing out.
+
+---
+
+### **Requirements**
+
+```text
+requests==2.34.2
+```
+
+### Specifies the required Python package available during script execution. Although this script does not directly use the library, it is included as part of the runtime environment configuration.
+
+---
+
+### **Run Script 3 (Hash Score) Configuration**
+<img width="736" height="822" alt="image" src="https://github.com/user-attachments/assets/c140e769-8e5c-42fa-9c36-3b436111400c" />
+
+<img width="735" height="835" alt="image" src="https://github.com/user-attachments/assets/6d4bf7c5-602d-4743-a4dc-da40dcbf5580" />
+
+## Event Transform (Message Builder)
+
+### Purpose
+
+### The **Event Transform (Message Only)** action combines data collected from previous workflow actions into a single structured message. It gathers the original alert information together with the reputation scores extracted from VirusTotal and URLScan.io, creating a standardized payload that is passed to the next stage of the workflow.
+
+### • Combines data from multiple actions.
+
+### • Creates a standardized message.
+
+### • Includes IOC reputation scores.
+
+### • Passes structured data to downstream actions.
+
+---
+
+## Configuration
+
+### **Name**
+
+```text
+Event Transform
+```
+
+### Identifies the action responsible for combining and formatting workflow data.
+
+---
+
+### **Description**
+
+```text
+Builds a structured payload containing the original alert details and threat intelligence scores for downstream processing.
+```
+
+### Explains that the action consolidates data from multiple workflow steps into a single message.
+
+---
+
+### **Mode**
+
+```text
+Message Only
+```
+
+### Configures the Event Transform to create a new message without modifying or delaying workflow execution.
+
+---
+
+### **Payload**
+
+```json
+{
+  "records": [
+    {
+      "fields": {
+        "alert_id": "<<webhook.body.alert_id>>",
+        "source_ip": "<<webhook.body.details.source_ip>>",
+        "destination_url": "<<webhook.body.details.destination_url>>",
+        "file_hash": "<<webhook.body.details.file_hash>>",
+        "ip_score": "<<run_script_2.output.ip_score>>",
+        "hash_score": "<<run_script_3.output.hash_score>>",
+        "url_score": "<<run_script_1.output.url_score>>",
+        "average": 0,
+        "processed": false
+      }
+    }
+  ]
+}
+```
+
+### The payload combines the original alert details received from the Webhook with the reputation scores extracted by the three Run Script actions. It also initializes the **average** score to **0** and the **processed** status to **false**, which are updated later in the workflow.
+
+### **Payload Fields**
+
+| **Field** | **Description** |
+|-----------|-----------------|
+| **alert_id** | Unique identifier of the generated alert. |
+| **source_ip** | Source IP address received from the Webhook. |
+| **destination_url** | Destination URL to be analyzed. |
+| **file_hash** | SHA-256 file hash received from the alert. |
+| **ip_score** | Malicious detection count from the VirusTotal IP Report. |
+| **hash_score** | Malicious detection count from the VirusTotal File Report. |
+| **url_score** | Reputation score returned by URLScan.io. |
+| **average** | Placeholder value initialized to **0** for later threat score calculation. |
+| **processed** | Processing flag initialized to **false** until the workflow completes. |
+
+---
+
+### **Event Transform (Message Builder) Configuration**
+<img width="728" height="575" alt="image" src="https://github.com/user-attachments/assets/217d9456-68ff-4fea-b9b4-ca35b019bf07" />
+
+<img width="726" height="619" alt="image" src="https://github.com/user-attachments/assets/611df32c-406d-48a9-a2e0-6290d1651b20" />
+
+## Run Script (Threat Score Calculation)
+
+### Purpose
+
+### The **Run Script** action calculates the **overall threat score** by combining the reputation scores obtained from VirusTotal IP analysis, VirusTotal File analysis, and URLScan.io URL analysis. It computes the average of these three values and returns both the individual scores and the final average, which is later used to classify alerts as malicious or benign.
+
+### • Collects all IOC reputation scores.
+
+### • Calculates the overall threat score.
+
+### • Returns the individual and average scores.
+
+### • Supports automated alert classification.
+
+---
+
+## Configuration
+
+### **Name**
+
+```text
+Run Script
+```
+
+### Identifies the action responsible for calculating the overall threat score.
+
+---
+
+### **Description**
+
+```text
+Calculates the overall threat score by averaging the IP, file hash, and URL reputation scores collected from VirusTotal and URLScan.io.
+```
+
+### Explains that this action combines the three IOC scores into a single threat score used for decision-making.
+
+---
+
+### **Runtime Environment**
+
+```text
+Python 3.13
+```
+
+### Executes the script using the Python 3.13 runtime environment provided by Tines.
+
+---
+
+### **Script**
+
+```python
+def main(input):
+    ip = int(input.get("ip_score") or 0)
+    hash_score = int(input.get("hash_score") or 0)
+    url_score = int(input.get("url_score") or 0)
+
+    average = (ip + hash_score + url_score) / 3
+
+    return {
+        "ip_score": ip,
+        "hash_score": hash_score,
+        "url_score": url_score,
+        "average": round(average, 2)
+    }
+```
+
+### The script retrieves the IP score, file hash score, and URL score from previous Run Script actions. It converts each value into an integer, calculates the average threat score, rounds it to two decimal places, and returns both the individual scores and the final average.
+
+### • Reads the three IOC scores.
+
+### • Converts values to integers.
+
+### • Calculates the average threat score.
+
+### • Returns the calculated results.
+
+---
+
+### **Emit Failure Event**
+
+```text
+Always
+```
+
+### Configured to always emit a failure event if the script encounters an error, allowing workflow failures to be logged and monitored.
+
+---
+
+### **Input**
+
+```json
+{
+  "ip_score": "<<run_script_2.output.ip_score>>",
+  "hash_score": "<<run_script_3.output.hash_score>>",
+  "url_score": "<<run_script_1.output.url_score>>"
+}
+```
+
+### Retrieves the reputation scores generated by the previous Run Script actions and passes them to the Python script for threat score calculation.
+
+---
+
+### **Timeout**
+
+```text
+10 Seconds
+```
+
+### Allows the script a maximum of **10 seconds** to complete execution before timing out.
+
+---
+
+### **Requirements**
+
+```text
+requests==2.34.2
+```
+
+### Specifies the required Python package available during script execution. Although this script does not directly use the library, it is included as part of the runtime environment configuration.
+
+---
+
+### **Run Script (Threat Score Calculation) Configuration**
+<img width="738" height="496" alt="image" src="https://github.com/user-attachments/assets/f6608ea6-20df-4220-9e7b-b004b7b55ab0" />
+
+<img width="729" height="539" alt="image" src="https://github.com/user-attachments/assets/5112ba26-7464-46a0-874a-df442d4da3ab" />
+
+<img width="724" height="776" alt="image" src="https://github.com/user-attachments/assets/2c34dee0-9605-45e3-880a-262f1e0a02db" />
+
+## Condition
+
+### Purpose
+
+### The **Condition** action evaluates the calculated threat score and determines whether the alert should be classified as **malicious** or **benign**. It checks the average threat score generated by the previous Run Script action and routes the workflow to the appropriate response path.
+
+### • Evaluates the calculated threat score.
+
+### • Applies the workflow decision logic.
+
+### • Routes alerts to the appropriate response path.
+
+### • Determines whether an alert is malicious or benign.
+
+---
+
+## Configuration
+
+### **Name**
+
+```text
+Condition
+```
+
+### Identifies the action responsible for evaluating the calculated threat score.
+
+---
+
+### **Description**
+
+```text
+Evaluates the calculated average threat score and determines whether the alert should follow the malicious or benign workflow.
+```
+
+### Explains that the action uses the calculated threat score to decide the next step in the automation process.
+
+---
+
+### **Rules**
+
+```text
+run_script.output.average
+is greater than
+0
+```
+
+### The condition checks whether the **average threat score** calculated by the previous Run Script is greater than **0**. If the condition evaluates to **True**, the alert is treated as **malicious** and the workflow proceeds to create a Jira incident. If the result is **False**, the alert follows the benign workflow.
+
+### • Retrieves the calculated average threat score.
+
+### • Compares the score against the defined threshold.
+
+### • Routes malicious alerts to the incident response workflow.
+
+### • Routes benign alerts to the non-malicious workflow.
+
+### **Condition Configuration**
+<img width="727" height="883" alt="image" src="https://github.com/user-attachments/assets/0cdb56ed-87a4-4569-b7aa-291776256b00" />
 
 
 
