@@ -2998,19 +2998,1255 @@ is greater than
 ### **Condition Configuration**
 <img width="727" height="883" alt="image" src="https://github.com/user-attachments/assets/0cdb56ed-87a4-4569-b7aa-291776256b00" />
 
+## Jira – Create Issue (Malicious Alert)
+
+### Purpose
+
+### The **Create Issue** action automatically creates a Jira ticket whenever the Condition action classifies an alert as **malicious**. The ticket contains all relevant investigation details, allowing SOC analysts to begin incident response without manually creating or documenting the alert.
+
+### • Automatically creates a Jira incident.
+
+### • Records investigation details.
+
+### • Eliminates manual ticket creation.
+
+### • Supports faster incident response.
+
+### Add Jira Api key to the jira software Create an issue with Atlassian. Navigate to the profile account settings and create the key 
+<img width="1913" height="756" alt="image" src="https://github.com/user-attachments/assets/5711a1ad-48ee-43b1-873c-a2815be4dc1b" />
+
+
+---
+
+## Configuration
+
+### **Name**
+
+```text
+Jira Software
+```
+
+### Identifies the Jira integration used for automated incident creation.
+
+---
+
+### **Action**
+
+```text
+Create an issue with Atlassian document format
+```
+
+### Creates a new Jira issue using the Jira Cloud REST API v3 and Atlassian Document Format (ADF).
+
+---
+
+### **Description**
+
+```text
+Automatically creates a Jira incident for malicious alerts detected by the SOAR workflow.
+```
+
+### Explains that the action creates an incident ticket after a malicious alert has been confirmed.
+
+---
+
+### **Documentation**
+
+```text
+https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/#api-rest-api-3-issue-post
+```
+
+### Official Jira REST API documentation used to configure the integration.
+
+---
+
+### **Jira Domain**
+
+```text
+INPUT.jira_software_credential.info.metadata.domain
+```
+
+### Retrieves the Jira Cloud domain from the stored Jira credentials.
+
+---
+
+### **Username**
+
+```text
+INPUT.jira_software_credential.info.metadata.username
+```
+
+### Uses the configured Jira account to authenticate and create the issue.
+
+---
+
+### **Project Key**
+
+```text
+KAN
+```
+
+### Specifies the Jira project where the incident ticket will be created.
+
+---
+
+### **Issue Type**
+
+```text
+Task
+```
+
+### Creates the incident as a **Task** within the selected Jira project.
+
+---
+
+### **Summary**
+
+```text
+Automated Threat Alert: Scan Results
+```
+
+### Defines the title of the Jira issue, allowing analysts to quickly identify automated security incidents.
+
+---
+
+### **Description**
+
+### The issue description is generated dynamically using **Atlassian Document Format (ADF)**. It includes important investigation details collected during the SOAR workflow, such as:
+
+### • Alert ID.
+
+### • Event Type.
+
+### • Source IP Address.
+
+### • Destination URL.
+
+### • File Hash.
+
+### • Malicious alert notification.
+
+### These details provide analysts with the necessary context to begin investigation immediately after the ticket is created.
+
+---
+
+### **Jira Create Issue Configuration**
+<img width="710" height="736" alt="image" src="https://github.com/user-attachments/assets/54f81608-e628-4e2c-ae0c-8463c16af0e1" />
+
+<img width="708" height="287" alt="image" src="https://github.com/user-attachments/assets/7bc04d26-b8dd-4bf2-8592-7507a0c7ed7e" />
+
+<img width="1442" height="750" alt="image" src="https://github.com/user-attachments/assets/fdcd39db-c627-49a8-a180-bfa696d5677e" />
+
+<img width="1443" height="659" alt="image" src="https://github.com/user-attachments/assets/85108747-ab26-44e3-99bc-34a454e0c167" />
+
+<img width="1425" height="658" alt="image" src="https://github.com/user-attachments/assets/35af00a3-acaf-47a1-a389-27851e8c1f46" />
+
+<img width="1425" height="109" alt="image" src="https://github.com/user-attachments/assets/93017aa4-dabb-4e16-8c64-b3ea9a13b14b" />
+
+## Jira – Add Issue Comment (Malicious Alert)
+
+### Purpose
+
+### The **Add Issue Comment** action automatically appends a detailed investigation summary to the Jira incident created for a **malicious alert**. The comment contains the alert details, MITRE ATT&CK mapping, IOC reputation scores, calculated threat score, and recommended response actions, enabling SOC analysts to begin investigation immediately without additional manual documentation.
+
+### • Adds investigation results to the malicious Jira incident.
+
+### • Documents IOC analysis and threat intelligence findings.
+
+### • Records MITRE ATT&CK mapping and threat score.
+
+### • Provides recommended incident response actions.
+
+### ### Add Jira Api key to the jira software Create an issue with Atlassian. Navigate to the profile account settings and create the key 
+<img width="1913" height="756" alt="image" src="https://github.com/user-attachments/assets/5711a1ad-48ee-43b1-873c-a2815be4dc1b" />
 
 
 
+---
+
+## Configuration
+
+### **Name**
+
+```text
+Jira Software
+```
+
+### Identifies the Jira integration used to update an existing malicious incident.
+
+---
+
+### **Action**
+
+```text
+Add issue comment with Jira markdown
+```
+
+### Adds a formatted investigation comment to the Jira incident using the Jira REST API v2.
+
+---
+
+### **Description**
+
+```text
+Automatically adds the IOC analysis results and investigation summary to the malicious Jira incident.
+```
+
+### Explains that this action documents the completed investigation after a malicious alert has been confirmed.
+
+---
+
+### **Documentation**
+
+```text
+https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-comments/#api-rest-api-2-issue-issueidorkey-comment-post
+```
+
+### Official Jira REST API documentation for adding comments to an existing issue.
+
+---
+
+### **Jira Domain**
+
+```text
+INPUT.jira_software_credential.info.metadata.domain
+```
+
+### Retrieves the Jira Cloud domain from the configured credentials.
+
+---
+
+### **Username**
+
+```text
+INPUT.jira_software_credential.info.metadata.username
+```
+
+### Uses the configured Jira account to authenticate the request.
+
+---
+
+### **Issue ID or Key**
+
+```text
+create_an_issue_with_atlassian_document_format.body.key
+```
+
+### Retrieves the key of the Jira issue created for the malicious alert so the investigation comment is added to the correct incident.
+
+---
+
+### **Comment**
+
+### The investigation summary is generated dynamically using information collected throughout the SOAR workflow. It provides analysts with a complete overview of the detected malicious activity.
+
+### **The generated comment includes:**
+
+### • Alert ID.
+
+### • Event Type.
+
+### • Severity.
+
+### • MITRE ATT&CK Technique and Tactic.
+
+### • Source IP Address.
+
+### • Destination URL.
+
+### • File Hash.
+
+### • VirusTotal IP Reputation Score.
+
+### • VirusTotal File Reputation Score.
+
+### • URLScan Reputation Score.
+
+### • Average Threat Score.
+
+### • Recommended analyst response actions.
+
+### • Automatic generation notice from the Tines SOAR Pipeline.
+
+---
+
+## API Configuration
+
+### **URL**
+
+```text
+https://INPUT.jira_domain.atlassian.net/rest/api/2/issue/INPUT.issue_id_or_key/comment
+```
+
+### API endpoint used to add the investigation comment to the malicious Jira incident.
+
+---
+
+### **Content Type**
+
+```text
+JSON
+```
+
+### Sends the request body in JSON format.
+
+---
+
+### **Method**
+
+```text
+POST
+```
+
+### Uses the HTTP POST method to create a new comment on the Jira issue.
+
+---
+
+### **Payload**
+
+```text
+=LOCAL.final_payload
+```
+
+### Sends the dynamically generated investigation summary to Jira.
+
+---
+
+### **Local Values**
+
+### The local values build the final JSON payload by inserting the generated investigation comment before the request is sent to Jira.
+
+---
+
+### **Authentication**
+
+```text
+Basic Authentication
+```
+
+### Authenticates the request using the Jira username and API token stored securely in the Tines Credentials vault.
+
+---
+### **Jira Add Issue Comment (Malicious Alert) Configuration**
+
+<img width="710" height="729" alt="image" src="https://github.com/user-attachments/assets/23dc4bfc-3615-42c9-a74c-8fad3a38f27b" />
+
+<img width="711" height="799" alt="image" src="https://github.com/user-attachments/assets/ebc849c4-a7c0-4769-83f5-1933166d5436" />
+
+<img width="710" height="604" alt="image" src="https://github.com/user-attachments/assets/bc529d91-51f7-4194-afb8-a21c826bffa7" />
+
+<img width="710" height="783" alt="image" src="https://github.com/user-attachments/assets/91b9485c-c0b2-4537-8c6e-3aeb9e2c8508" />
+
+## Jira – Create Issue (Benign Alert)
+
+### Purpose
+
+### The **Create Issue** action automatically creates a Jira ticket when the SOAR workflow classifies an alert as **benign**. Although no malicious activity is detected, creating a ticket provides an audit trail of the investigation, records the verified IOC details, and documents that the alert was successfully analyzed.
+
+### • Automatically creates a Jira ticket for benign alerts.
+
+### • Records the completed investigation.
+
+### • Maintains an audit trail for future reference.
+
+### • Documents verified benign IOCs.
+### ### Add Jira Api key to the jira software Create an issue with Atlassian. Navigate to the profile account settings and create the key 
+<img width="1913" height="756" alt="image" src="https://github.com/user-attachments/assets/5711a1ad-48ee-43b1-873c-a2815be4dc1b" />
 
 
+---
+
+## Configuration
+
+### **Name**
+
+```text
+Jira Software
+```
+
+### Identifies the Jira integration used for creating benign investigation records.
+
+---
+
+### **Action**
+
+```text
+Create an issue with Atlassian document format
+```
+
+### Creates a new Jira issue using the Jira Cloud REST API v3 and Atlassian Document Format (ADF).
+
+---
+
+### **Description**
+
+```text
+Automatically creates a Jira ticket for alerts verified as benign.
+```
+
+### Explains that this action records the completed investigation for non-malicious alerts.
+
+---
+
+### **Documentation**
+
+```text
+https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/#api-rest-api-3-issue-post
+```
+
+### Official Jira REST API documentation used to configure the issue creation.
+
+---
+
+### **Jira Domain**
+
+```text
+INPUT.jira_software_credential.info.metadata.domain
+```
+
+### Retrieves the Jira Cloud domain from the configured credentials.
+
+---
+
+### **Username**
+
+```text
+INPUT.jira_software_credential.info.metadata.username
+```
+
+### Uses the configured Jira account to authenticate the request.
+
+---
+
+### **Project Key**
+
+```text
+KAN
+```
+
+### Specifies the Jira project where the benign investigation ticket will be created.
+
+---
+
+### **Issue Type**
+
+```text
+Task
+```
+
+### Creates the investigation as a **Task** within the selected Jira project.
+
+---
+
+### **Summary**
+
+```text
+Benign IOC Verified - <<webhook.body.alert_id>>
+```
+
+### Generates a descriptive title containing the alert ID for easy identification.
+
+---
+
+### **Description**
+
+### The issue description is dynamically generated using **Atlassian Document Format (ADF)** and documents the alert that has been verified as benign.
+
+### **The generated description includes:**
+
+### • Benign Alert Verification message.
+
+### • Alert ID.
+
+### • Event Type.
+
+### • Source IP Address.
+
+### • Destination URL.
+
+### • File Hash.
+
+### This information provides a permanent record showing that the IOC was investigated and determined to be non-malicious.
+
+---
+
+### **Jira Create Issue (Benign Alert) Configuration**
+
+<img width="707" height="732" alt="image" src="https://github.com/user-attachments/assets/f465eedc-c524-4d05-9ac2-dbf99a97b932" />
+
+<img width="711" height="300" alt="image" src="https://github.com/user-attachments/assets/ede441cb-3f26-4aa0-9116-e19b4dd1b3bb" />
+
+```json
+{
+  "version": 1,
+  "type": "doc",
+  "content": [
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "✅ BENIGN ALERT VERIFIED\n\n",
+          "marks": [
+            {
+              "type": "strong"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "• Alert ID: ",
+          "marks": [
+            {
+              "type": "strong"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "<<webhook.body.alert_id>>\n"
+        },
+        {
+          "type": "text",
+          "text": "• Event Type: ",
+          "marks": [
+            {
+              "type": "strong"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "<<webhook.body.event_type>>\n"
+        },
+        {
+          "type": "text",
+          "text": "• Source IP: ",
+          "marks": [
+            {
+              "type": "strong"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "<<webhook.body.details.source_ip>>\n"
+        },
+        {
+          "type": "text",
+          "text": "• URL: ",
+          "marks": [
+            {
+              "type": "strong"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "<<webhook.body.details.destination_url>>\n"
+        },
+        {
+          "type": "text",
+          "text": "• File Hash: ",
+          "marks": [
+            {
+              "type": "strong"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "<<webhook.body.details.file_hash>>"
+        }
+      ]
+    }
+  ]
+}
+```
+## Jira – Add Issue Comment (Benign Alert)
+
+### Purpose
+
+### The **Add Issue Comment** action automatically appends a detailed investigation summary to the Jira issue created for a **benign alert**. The comment documents the alert details, IOC verification results, MITRE ATT&CK mapping, and analyst recommendations, providing a complete audit trail of the investigation.
+
+### • Documents the completed benign investigation.
+
+### • Records verified IOC analysis results.
+
+### • Stores MITRE ATT&CK mapping.
+
+### • Provides analyst recommendations for future reference.
+
+---
+
+## Configuration
+
+### **Name**
+
+```text
+Jira Software
+```
+
+### Identifies the Jira integration used to update an existing benign investigation.
+
+---
+
+### **Action**
+
+```text
+Add issue comment with Jira markdown
+```
+
+### Adds a formatted Markdown comment to the Jira issue using the Jira REST API v2.
+
+---
+
+### **Description**
+
+```text
+Automatically adds the benign IOC verification results and investigation summary to the Jira issue.
+```
+
+### Explains that this action documents the completed analysis after the alert has been verified as benign.
+
+---
+
+### **Documentation**
+
+```text
+https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-comments/#api-rest-api-2-issue-issueidorkey-comment-post
+```
+
+### Official Jira REST API documentation for adding comments to an existing issue.
+
+---
+
+### **Jira Domain**
+
+```text
+INPUT.jira_software_credential.info.metadata.domain
+```
+
+### Retrieves the Jira Cloud domain from the configured credentials.
+
+---
+
+### **Username**
+
+```text
+INPUT.jira_software_credential.info.metadata.username
+```
+
+### Uses the configured Jira account to authenticate the request.
+
+---
+
+### **Issue ID or Key**
+
+```text
+create_an_issue_with_atlassian_document_format.body.key
+```
+
+### Retrieves the Jira issue key generated in the previous action to ensure the comment is added to the correct ticket.
+
+---
+
+### **Comment**
+
+### The investigation summary is generated dynamically using information collected throughout the SOAR workflow. It documents that the IOC analysis has been completed and no malicious activity was detected.
+
+### **The generated comment includes:**
+
+### • Alert ID.
+
+### • Event Type.
+
+### • Severity.
+
+### • Timestamp.
+
+### • Source IP Address.
+
+### • Destination URL.
+
+### • File Hash.
+
+### • IP Reputation Status.
+
+### • URL Reputation Status.
+
+### • File Hash Reputation Status.
+
+### • MITRE ATT&CK Technique and Tactic.
+
+### • Analyst recommendations.
+
+### • Automatic generation notice from the Tines SOAR Pipeline.
+
+---
+
+## API Configuration
+
+### **URL**
+
+```text
+https://INPUT.jira_domain.atlassian.net/rest/api/2/issue/INPUT.issue_id_or_key/comment
+```
+
+### API endpoint used to add the investigation comment to the Jira issue.
+
+---
+
+### **Content Type**
+
+```text
+JSON
+```
+
+### Sends the request body in JSON format.
+
+---
+
+### **Method**
+
+```text
+POST
+```
+
+### Uses the HTTP POST method to create a new comment on the Jira issue.
+
+---
+
+### **Payload**
+
+```text
+=LOCAL.final_payload
+```
+
+### Sends the generated investigation summary to the Jira issue.
+
+---
+
+### **Local Values**
+
+### The local values construct the final request payload by inserting the generated investigation comment before sending it to Jira.
+
+---
+
+### **Authentication**
+
+```text
+Basic Authentication
+```
+
+### Authenticates the request using the Jira username and API token securely stored in the Tines Credentials vault.
+
+---
+
+### **Jira Add Issue Comment (Benign Alert) Configuration**
+
+<img width="717" height="740" alt="image" src="https://github.com/user-attachments/assets/b40aff53-eb5d-4913-b1e3-698688b384f3" />
+
+### Comment
+```markdown
+*✅ BENIGN IOC VERIFICATION COMPLETED*
+
+The automated SOAR pipeline analyzed the submitted indicators and determined that no malicious activity was detected.
+
+---
+
+## **Alert Information**
+
+**Alert ID:** <<webhook.body.alert_id>>
+
+**Event Type:** <<webhook.body.event_type>>
+
+**Severity:** <<webhook.body.severity>>
+
+**Timestamp:** <<webhook.body.timestamp>>
+
+---
+
+## **Indicator Details**
+
+**Source IP:** <<webhook.body.details.source_ip>>
+
+**Destination URL:** <<webhook.body.details.destination_url>>
+
+**File Hash:** <<webhook.body.details.file_hash>>
+
+---
+
+## **Threat Intelligence Summary**
+
+✓ IP Reputation: Clean
+
+✓ URL Reputation: Clean
+
+✓ File Hash Reputation: Clean
+
+---
+
+## **MITRE ATT&CK**
+
+**Technique:** <<webhook.body.mitre.technique>>
+
+**Tactic:** <<webhook.body.mitre.tactic>>
+
+---
+
+## **Analyst Recommendation**
+
+- No malicious indicators were identified.
+- Continue monitoring the affected asset.
+- No containment or remediation is required.
+
+---
+
+*Generated automatically by the **Tines SOAR Pipeline***
+```
+
+# Risk Score Calculation
+
+## Overview
+
+### The **Risk Score Calculation** stage combines the reputation results collected from **VirusTotal IP Analysis**, **VirusTotal File Analysis**, and **URLScan.io URL Analysis** into a single numerical value. This average score represents the overall threat level of the alert and is used by the SOAR workflow to determine whether the alert should follow the **malicious** or **benign** response path.
+
+### • Combines multiple IOC reputation scores into a single value.
+
+### • Standardizes the threat assessment process.
+
+### • Eliminates manual risk calculation.
+
+### • Enables automated decision-making within the SOAR workflow.
+
+---
+
+## Formula
+
+### The overall threat score is calculated using the arithmetic mean of the three IOC reputation scores.
+
+```text
+Average Risk Score = (IP Score + URL Score + Hash Score) / 3
+```
+
+---
+
+## Risk Score Components :
+
+### **IP Score**
+
+### The IP Score is obtained from the **VirusTotal IP Address Report**. It represents the number of security vendors that have identified the source IP address as malicious.
+
+### • Higher value = Higher IP reputation risk.
+
+### • Lower value = Clean or trusted IP address.
+
+---
+
+### **URL Score**
+
+### The URL Score is retrieved from **URLScan.io** after scanning the destination URL. It represents the reputation assigned to the submitted website based on its analysis.
+
+### • Higher value = Suspicious or malicious website.
+
+### • Lower value = Safe or trusted website.
+
+---
+
+### **Hash Score**
+
+### The Hash Score is obtained from the **VirusTotal File Report**. It indicates how many antivirus engines have detected the submitted file hash as malicious.
+
+### • Higher value = Malicious file detected.
+
+### • Lower value = Clean file.
+
+---
+
+## Decision Conditions
+
+### After calculating the average threat score, the SOAR workflow evaluates the result using the configured Condition action.
+
+### **Condition 1 – Average Risk Score > 0**
+
+### If the calculated average score is **greater than 0**, at least one IOC has been identified as malicious by one or more threat intelligence sources.
+
+### • Alert is classified as **Malicious**.
+
+### • A Jira incident is automatically created.
+
+### • Investigation comments are added.
+
+### • The malicious workflow continues.
+
+---
+
+### **Condition 2 – Average Risk Score = 0**
+
+### If the calculated average score equals **0**, none of the IOC sources detected malicious activity.
+
+### • Alert is classified as **Benign**.
+
+### • A benign verification ticket is created.
+
+### • Benign investigation comments are added.
+
+### • The workflow ends after documentation.
+
+<img width="1704" height="421" alt="image" src="https://github.com/user-attachments/assets/7bd81002-965e-49cc-a7ab-c46eef09c0e2" />
+
+---
+
+# MITRE ATT&CK Mapping
+
+## Overview
+
+### The **MITRE ATT&CK Framework** is a globally recognized cybersecurity knowledge base that classifies adversary behaviors into tactics and techniques. In this project, every generated alert is automatically mapped to a corresponding MITRE ATT&CK technique and tactic, allowing analysts to understand the attack behavior and respond using standardized threat intelligence.
+
+### • Standardizes attack classification.
+
+### • Maps alerts to real-world attacker techniques.
+
+### • Improves investigation and incident response.
+
+### • Provides a common language for SOC analysts.
+
+---
+
+## MITRE ATT&CK Mapping Table
+
+| **Security Event** | **Technique ID** | **Technique** | **Tactic** |
+|--------------------|------------------|---------------|------------|
+| Brute-Force Attack | T1110 | Brute Force | Credential Access |
+| Phishing Email Detected | T1566 | Phishing | Initial Access |
+| Malware Execution | T1204 | User Execution | Execution |
+| Ransomware Activity | T1486 | Data Encrypted for Impact | Impact |
+| Command and Control | T1071 | Application Layer Protocol | Command and Control |
+| DNS Tunneling | T1071.004 | DNS Protocol | Command and Control |
+| Privilege Escalation | T1068 | Exploitation for Privilege Escalation | Privilege Escalation |
+| Lateral Movement | T1021 | Remote Services | Lateral Movement |
+| Data Exfiltration | T1041 | Exfiltration Over C2 Channel | Exfiltration |
+| PowerShell Execution | T1059.001 | PowerShell | Execution |
+
+---
+
+## Why MITRE ATT&CK Mapping is Important
+
+### Mapping security events to the MITRE ATT&CK Framework provides valuable context about attacker behavior. Instead of viewing alerts as isolated events, analysts can understand the attack stage, identify adversary techniques, and prioritize response actions based on standardized threat intelligence.
+
+### • Identifies attacker tactics and techniques.
+
+### • Standardizes threat investigations across SOC teams.
+
+### • Improves threat hunting and incident analysis.
+
+### • Supports faster and more accurate incident response.
+
+### • Enables integration with enterprise security tools and reporting.
+
+### • Helps prioritize alerts based on attacker behavior.
+
+---
+
+## Implementation in This Project
+
+### During alert generation, the Python script automatically assigns a **MITRE Technique ID** and **Tactic** based on the selected attack type. These values are included in the alert payload and are passed through the entire SOAR workflow.
+
+### The mapped information is used in:
+
+### • Jira incident descriptions.
+
+### • Jira investigation comments.
+
+### • Threat documentation.
+
+### • SOC analyst investigations.
+
+### • Automated incident reporting.
+
+---
+
+### **MITRE ATT&CK Mapping within the SOAR Workflow**
+
+<img width="1920" height="974" alt="image" src="https://github.com/user-attachments/assets/189764a9-436c-4e49-9663-aec746a7e70e" />
+
+# Jira Automation
+
+## Overview
+
+### Jira is integrated into the SOAR workflow to automate incident management after an alert has been analyzed. Based on the calculated threat score, the workflow automatically creates either a **Malicious Incident** or a **Benign Verification** ticket and appends detailed investigation comments. This eliminates manual ticket creation, standardizes documentation, and ensures every alert is fully tracked.
+
+### • Automatically creates incident tickets.
+
+### • Documents investigation results.
+
+### • Maintains a complete audit trail.
+
+### • Reduces manual SOC workload.
+
+---
+
+# Malicious Ticket
+
+## Overview
+
+### When the average threat score is **greater than 0**, the alert is classified as **malicious**. The SOAR workflow automatically creates a Jira incident containing all important IOC details, enabling analysts to begin investigation immediately.
+
+### • Triggered when **Average Risk Score > 0**.
+
+### • Creates a Jira incident automatically.
+
+### • Includes alert and IOC information.
+
+### • Starts the incident response process.
+
+---
+
+## Ticket Fields
+
+### The malicious Jira ticket contains the following information:
+
+### • Alert ID
+
+### • Event Type
+
+### • Source IP Address
+
+### • Destination URL
+
+### • File Hash
+
+### • Issue Summary
+
+### • Issue Description
+
+### • Project Key
+
+### • Issue Type
+
+---
+
+### ** Malicious Jira Ticket**
+```json
+{
+  "create_an_issue_with_atlassian_document_format": {
+    "body": {
+      "id": "10352",
+      "key": "KAN-119",
+      "self": "https://dhaneshkumarcyber.atlassian.net/rest/api/3/issue/10352"
+    },
+    "headers": {
+      "content-type": "application/json;charset=UTF-8",
+      "date": "Fri, 31 Jul 2026 20:56:47 GMT",
+      "server": "AtlassianEdge",
+      "cache-control": "no-cache, no-store, no-transform"
+    },
+    "status": 201,
+    "meta": {
+      "response_time": 0.704540909,
+      "duration": 0.808051248,
+      "pending_duration": 0.056877755
+    }
+  }
+}
+```
 
 
+---
 
+# Benign Ticket
 
+## Overview
 
+### When the average threat score equals **0**, the alert is verified as **benign**. Instead of opening a security incident, the workflow creates a verification ticket documenting that the IOC analysis was completed successfully.
 
+### • Triggered when **Average Risk Score = 0**.
 
+### • Creates a benign verification ticket.
 
+### • Records completed investigation.
 
+### • Maintains an audit trail.
+
+---
+
+## Ticket Fields
+
+### The benign Jira ticket contains the following information:
+
+### • Alert ID
+
+### • Event Type
+
+### • Source IP Address
+
+### • Destination URL
+
+### • File Hash
+
+### • Verification Status
+
+### • Issue Summary
+
+### • Issue Description
+
+---
+
+### **Benign Jira Ticket**
+
+```json
+{
+  "create_an_issue_with_atlassian_document_format": {
+    "body": {
+      "id": "10351",
+      "key": "KAN-118",
+      "self": "https://dhaneshkumarcyber.atlassian.net/rest/api/3/issue/10351"
+    },
+    "headers": {
+      "content-type": "application/json;charset=UTF-8",
+      "date": "Fri, 31 Jul 2026 20:56:42 GMT",
+      "server": "AtlassianEdge",
+      "cache-control": "no-cache, no-store, no-transform"
+    },
+    "status": 201,
+    "meta": {
+      "response_time": 0.66100568,
+      "duration": 0.792723673,
+      "pending_duration": 0.030861538
+    }
+  }
+}
+```
+
+---
+
+# Comments
+
+## Overview
+
+### After creating the Jira ticket, the SOAR workflow automatically appends a detailed investigation comment. These comments summarize the IOC analysis, MITRE ATT&CK mapping, threat intelligence results, and analyst recommendations, ensuring that all investigation details are available within the Jira issue.
+
+### • Automatically documents investigation findings.
+
+### • Adds IOC reputation results.
+
+### • Records MITRE ATT&CK information.
+
+### • Provides analyst recommendations.
+
+---
+
+## Malicious Comment
+
+### The malicious comment is added only when the alert is classified as **malicious**. It includes investigation results, IOC reputation scores, calculated threat score, MITRE ATT&CK mapping, and recommended response actions.
+
+### **Includes:**
+
+### • Alert Information
+
+### • Indicator Details
+
+### • Threat Intelligence Results
+
+### • Average Risk Score
+
+### • MITRE ATT&CK Mapping
+
+### • Recommended Analyst Actions
+
+---
+
+### **Malicious Jira Comment**
+
+```json
+{
+  "add_issue_comment_with_jira_markdown": {
+    "body": {
+      "id": "10641",
+      "self": "https://dhaneshkumarcyber.atlassian.net/rest/api/2/issue/10352/comment/10641",
+      "author": {
+        "displayName": "Dhanesh kumar",
+        "accountType": "atlassian"
+      },
+      "body": "🔍 Automated IOC Analysis Completed\n\nAlert ID: ALERT-LATE-1785531390\nEvent Type: Lateral Movement\nSeverity: Critical\n\nMITRE ATT&CK\nTechnique: T1021\nTactic: Lateral Movement\n\nSource IP: 193.56.28.14\nDestination URL: https://example.com\nFile Hash: 275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f\n\nThreat Intelligence Results\n---------------------------\nIP Reputation Score: 3\nFile Hash Score: 65\nURL Reputation Score: 0\nAverage Risk Score: 22.67\n\nRecommended Actions\n-------------------\n• Validate IOC against additional threat intelligence sources.\n• Block malicious IP, URL, and hash if confirmed.\n• Investigate affected endpoint and user activity.\n• Collect endpoint evidence if required.\n• Continue monitoring for additional indicators.\n\nGenerated automatically by Tines SOAR Pipeline.",
+      "created": "2026-08-01T02:26:47.824+0530",
+      "updated": "2026-08-01T02:26:47.824+0530"
+    },
+    "headers": {
+      "content-type": "application/json;charset=UTF-8",
+      "date": "Fri, 31 Jul 2026 20:56:47 GMT",
+      "server": "AtlassianEdge",
+      "cache-control": "no-cache, no-store, no-transform"
+    },
+    "status": 201,
+    "meta": {
+      "response_time": 0.312976869,
+      "duration": 0.400962691,
+      "pending_duration": 0.023337671
+    }
+  }
+}
+```
+
+---
+
+## Benign Comment
+
+### The benign comment is added when no malicious indicators are detected. It documents the completed IOC verification, confirms that all indicators are clean, and provides recommendations for continued monitoring.
+
+### **Includes:**
+
+### • Alert Information
+
+### • Indicator Details
+
+### • Threat Intelligence Summary
+
+### • MITRE ATT&CK Mapping
+
+### • Analyst Recommendation
+
+### • Benign Verification Status
+
+---
+
+###  **Benign Jira Comment**
+```json
+{
+  "add_issue_comment_with_jira_markdown": {
+    "body": {
+      "id": "10640",
+      "self": "https://dhaneshkumarcyber.atlassian.net/rest/api/2/issue/10351/comment/10640",
+      "author": {
+        "displayName": "Dhanesh kumar",
+        "accountType": "atlassian"
+      },
+      "body": "✅ BENIGN IOC VERIFICATION COMPLETED\n\nThe automated SOAR pipeline analyzed the submitted indicators and determined that no malicious activity was detected.\n\nAlert Information\n-----------------\nAlert ID: ALERT-PHIS-1785531386\nEvent Type: Phishing Email Detected\nSeverity: Low\nTimestamp: 2026-07-31T20:56:26.240984+00:00\n\nIndicator Details\n-----------------\nSource IP: 8.8.8.8\nDestination URL: https://google.com\nFile Hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n\nThreat Intelligence Summary\n---------------------------\n✓ IP Reputation: Clean\n✓ URL Reputation: Clean\n✓ File Hash Reputation: Clean\n\nMITRE ATT&CK\n------------\nTechnique: T1566\nTactic: Initial Access\n\nAnalyst Recommendation\n----------------------\n• No malicious indicators were identified.\n• Continue monitoring the affected asset.\n• No containment or remediation is required.\n\nGenerated automatically by the Tines SOAR Pipeline.",
+      "created": "2026-08-01T02:26:42.791+0530",
+      "updated": "2026-08-01T02:26:42.791+0530"
+    },
+    "headers": {
+      "content-type": "application/json;charset=UTF-8",
+      "date": "Fri, 31 Jul 2026 20:56:42 GMT",
+      "server": "AtlassianEdge",
+      "cache-control": "no-cache, no-store, no-transform"
+    },
+    "status": 201,
+    "meta": {
+      "response_time": 0.274154296,
+      "duration": 0.34689893,
+      "pending_duration": 0.021558113
+    }
+  }
+}
+```
+
+## Testing
 
 
