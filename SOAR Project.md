@@ -4247,6 +4247,1266 @@ Average Risk Score = (IP Score + URL Score + Hash Score) / 3
 }
 ```
 
+## Webhook
+
+### Overview
+
+The **Webhook** is the entry point of the SOAR workflow. It receives the alert payload from the Python script, validates the request, and triggers the Tines automation pipeline.
+
+### Event Output
+
+```json
+{
+  "webhook": {
+    "body": {
+      "alert_id": "ALERT-PRIV-1785600992",
+      "timestamp": "2026-08-01T16:16:32.102119+00:00",
+      "event_type": "Privilege Escalation",
+      "severity": "Critical",
+      "mitre": {
+        "technique": "T1068",
+        "tactic": "Privilege Escalation"
+      },
+      "details": {
+        "source_ip": "193.56.28.14",
+        "file_hash": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+        "destination_url": "https://example.com",
+        "status": "Flagged Malicious"
+      }
+    },
+    "headers": {
+      "x_forwarded_for": "115.98.24.203",
+      "x_forwarded_proto": "https",
+      "x_forwarded_port": "443",
+      "host": "hidden-heather-3488.tines.com",
+      "x_amzn_trace_id": "Root=1-6a6e1bdf-68d32e0d5d56f6fc23da08a2",
+      "user_agent": "python-requests/2.34.2",
+      "accept_encoding": "gzip, deflate",
+      "accept": "*/*",
+      "version": "HTTP/1.1",
+      "content-type": "application/json",
+      "content-length": "411",
+      "request-method": "POST",
+      "date": "Sat, 01 Aug 2026 16:16:31 UTC",
+      "request_ip": "115.98.24.203"
+    },
+    "response": {
+      "body": {
+        "status": "ok"
+      },
+      "status": 201
+    }
+  }
+}
+```
+## Submit a URL to be Scanned
+
+### Overview
+
+This action submits the extracted destination URL to **URLScan.io** for analysis. URLScan accepts the request, creates a unique scan, and returns a scan identifier along with URLs that can be used to retrieve the scan results later in the workflow.
+
+### Event Output
+
+```json
+{
+  "submit_a_url_to_be_scanned": {
+    "body": {
+      "message": "Submission successful",
+      "uuid": "019fbe1c-e781-75dd-948e-7f95de14adbd",
+      "result": "https://urlscan.io/result/019fbe1c-e781-75dd-948e-7f95de14adbd/",
+      "api": "https://urlscan.io/api/v1/result/019fbe1c-e781-75dd-948e-7f95de14adbd/",
+      "visibility": "public",
+      "options": {},
+      "url": "https://example.com/"
+    },
+    "headers": {
+      "server": "nginx",
+      "date": "Sat, 01 Aug 2026 16:16:33 GMT",
+      "content-type": "application/json; charset=utf-8",
+      "transfer-encoding": "chunked",
+      "connection": "keep-alive",
+      "x-rate-limit-scope": "user",
+      "x-rate-limit-action": "public",
+      "x-rate-limit-window": "minute",
+      "x-rate-limit-limit": "60",
+      "x-rate-limit-remaining": "52",
+      "x-rate-limit-reset": "2026-08-01T16:17:00.000Z",
+      "x-rate-limit-reset-after": "26",
+      "vary": "Accept, Accept-Encoding",
+      "etag": "W/\"148-MqcAonCZH1qrnffOEsDVMWcJtC8\"",
+      "content-security-policy": "default-src 'self' ...",
+      "referrer-policy": "same-origin",
+      "strict-transport-security": "max-age=63072000; includeSubdomains; preload",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "DENY",
+      "x-xss-protection": "0",
+      "x-robots-tag": "all",
+      "content-encoding": "gzip"
+    },
+    "status": 200,
+    "meta": {
+      "response_time": 0.601091888,
+      "duration": 1.113912744,
+      "pending_duration": 0.166670779
+    }
+  }
+}
+```
+
+## Event Transform
+
+### Overview
+
+The **Event Transform** action introduces a **25-second delay** before the workflow proceeds to the next step. This allows external services, such as **URLScan.io**, enough time to complete the scan so that the results can be retrieved successfully.
+
+### Event Output
+
+```json
+{
+  "event_transform": {
+    "delay": 25
+  }
+}
+```
+
+## Retrieve Result of Scan
+
+### Overview
+
+This action retrieves the completed scan results from **URLScan.io** using the scan UUID. It returns information about the scanned webpage, network requests, IP address, hosting provider, scan statistics, and the final threat verdict used later in the SOAR decision-making process.
+
+### Event Output
+
+```json
+{
+  "retrieve_result_of_scan": {
+    "body": {
+      "data": {
+        "requests": [
+          {
+            "request": {
+              "documentURL": "https://example.com/",
+              "type": "Document",
+              "primaryRequest": true
+            },
+            "response": {
+              "hash": "ff67a9d764d6a2367a187734e697f6a53217db9a21c101d410a113ca871a299d",
+              "size": 559,
+              "asn": {
+                "ip": "2606:4700:10::6814:179a",
+                "asn": "13335",
+                "country": "US",
+                "description": "CLOUDFLARENET - Cloudflare, Inc., US",
+                "name": "Cloudflare"
+              }
+            }
+          }
+        ]
+      },
+      "verdicts": {
+        "overall": {
+          "score": 0,
+          "categories": [],
+          "brands": [],
+          "tags": [],
+          "malicious": false,
+          "hasVerdicts": true
+        },
+        "urlscan": {
+          "score": 0,
+          "malicious": false,
+          "hasVerdicts": false
+        }
+      }
+    },
+    "status": 200,
+    "meta": {
+      "response_time": 0.149671559,
+      "duration": 0.371993673,
+      "pending_duration": 0.039234188
+    }
+  }
+}
+```
+
+## Run Script 1
+
+### Overview
+
+This Python script processes the **URLScan.io** results and extracts the **URL Reputation Score**. The score is used later in the workflow to calculate the overall risk score for the alert.
+
+### Event Output
+
+```json
+{
+  "run_script_1": {
+    "output": {
+      "url_score": "0"
+    }
+  }
+}
+```
+
+## Get an IP Address Report
+
+### Overview
+
+This action queries the **VirusTotal IP Address API** using the source IP extracted from the alert. VirusTotal returns reputation data, threat intelligence, WHOIS information, ASN details, and detection statistics from multiple security vendors. These results are later used to calculate the IP risk score.
+
+### Event Output
+
+```json
+{
+  "get_an_ip_address_report": {
+    "body": {
+      "data": {
+        "id": "193.56.28.14",
+        "type": "ip_address",
+        "attributes": {
+          "last_analysis_stats": {
+            "malicious": 3,
+            "suspicious": 3,
+            "undetected": 33,
+            "harmless": 52,
+            "timeout": 0
+          },
+          "country": "US",
+          "continent": "NA",
+          "network": "193.56.28.0/24",
+          "as_owner": "3xK Tech GmbH",
+          "asn": 200373,
+          "reputation": 0,
+          "regional_internet_registry": "ARIN"
+        }
+      }
+    },
+    "headers": {
+      "content-type": "application/json",
+      "content-encoding": "gzip",
+      "server": "Google Frontend"
+    },
+    "status": 200,
+    "meta": {
+      "response_time": 0.526702285,
+      "duration": 0.592454001,
+      "pending_duration": 0.022667962
+    }
+  }
+}
+```
+
+## Run Script 2
+
+### Overview
+
+This Python script processes the **VirusTotal IP Address Report** and extracts the number of security vendors that identified the source IP as **malicious**. The extracted value is stored as the **IP Reputation Score** and is later used to calculate the overall risk score.
+
+### Event Output
+
+```json
+{
+  "run_script_2": {
+    "output": {
+      "ip_score": "3"
+    }
+  }
+}
+```
+
+## Get a File Report
+
+### Overview
+
+This action queries the **VirusTotal File API** using the SHA-256 file hash extracted from the alert. VirusTotal analyzes the file hash against multiple security vendors and returns its reputation, detection results, and metadata. These results are used to determine the **File Reputation Score** in the next step.
+
+### Event Output
+
+```json
+{
+  "get_a_file_report": {
+    "body": {
+      "data": {
+        "id": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+        "type": "file"
+      }
+    },
+    "headers": {
+      "content-type": "application/json",
+      "content-encoding": "gzip",
+      "server": "Google Frontend"
+    },
+    "status": 200,
+    "meta": {
+      "response_time": 0.305600237,
+      "duration": 0.377727044,
+      "pending_duration": 0.027633384
+    }
+  }
+}
+```
+
+## Run Script 3
+
+### Overview
+
+This Python script processes the **VirusTotal File Report** and extracts the number of security vendors that detected the file hash as **malicious**. The extracted value is stored as the **File Reputation Score** and is later used to calculate the overall risk score.
+
+### Event Output
+
+```json
+{
+  "run_script_3": {
+    "output": {
+      "hash_score": "65"
+    }
+  }
+}
+```
+
+## Event Transform
+
+### Overview
+
+This Event Transform action combines the outputs from all previous actions into a single structured record. It collects the alert details, reputation scores from VirusTotal and URLScan, and prepares the data for the Risk Score Calculation and Decision Engine.
+
+### Event Output
+
+```json
+{
+  "event_transform": {
+    "records": [
+      {
+        "fields": {
+          "alert_id": "ALERT-PRIV-1785600992",
+          "source_ip": "193.56.28.14",
+          "destination_url": "https://example.com",
+          "file_hash": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+          "ip_score": "3",
+          "hash_score": "65",
+          "url_score": "0",
+          "average": 0,
+          "processed": false
+        }
+      }
+    ]
+  }
+}
+```
+
+## Run Script
+
+### Overview
+
+This Python script calculates the **Average Risk Score** by combining the reputation scores obtained from the IP Address, File Hash, and URL analysis. The calculated score is used by the Decision Engine to determine whether the alert should follow the **Malicious** or **Benign** workflow.
+
+### Event Output
+
+```json
+{
+  "run_script": {
+    "output": {
+      "ip_score": 3,
+      "hash_score": 65,
+      "url_score": 0,
+      "average": 22.67
+    }
+  }
+}
+```
+
+## Condition
+
+### Overview
+
+This Condition action compares the calculated **Average Risk Score** against the predefined threshold. Since the average score is greater than **0**, the condition evaluates to **True**, allowing the workflow to continue through the **Malicious Incident Response** path.
+
+### Event Output
+
+```json
+{
+  "condition": {
+    "rule_matched": true,
+    "rule_results": [
+      {
+        "type": "field>value",
+        "path": "<<run_script.output.average>>",
+        "matched": true,
+        "field": "22.67",
+        "value": "0"
+      }
+    ]
+  }
+}
+```
+
 ## Testing
 
+### Create an Issue with Atlassian Document Format
+
+### Creates a new Jira issue automatically when the calculated risk score exceeds the configured threshold.
+
+### Event Output
+
+```json
+{
+  "create_an_issue_with_atlassian_document_format": {
+    "body": {
+      "id": "10406",
+      "key": "KAN-141",
+      "self": "https://dhaneshkumarcyber.atlassian.net/rest/api/3/issue/10406"
+    },
+    "status": 201,
+    "meta": {
+      "response_time": 0.495649759,
+      "duration": 0.604905266
+    }
+  }
+}
+```
+
+<img width="1584" height="801" alt="image" src="https://github.com/user-attachments/assets/d883a9f0-dd61-453b-805c-7eb57775c495" />
+
+## Testing
+
+### Add Issue Comment with Jira Markdown
+
+### This action adds an automated investigation summary as a comment to the Jira issue, documenting the IOC analysis, reputation scores, and recommended analyst actions.
+
+### Event Output
+
+```json
+{
+  "add_issue_comment_with_jira_markdown": {
+    "body": {
+      "id": "10695",
+      "created": "2026-08-01T21:47:04.360+0530",
+      "updated": "2026-08-01T21:47:04.360+0530",
+      "jsdPublic": true,
+      "body": "🔍 Automated IOC Analysis Completed\n\nAlert ID: ALERT-PRIV-1785600992\nEvent Type: Privilege Escalation\nSeverity: Critical\n\nMITRE ATT&CK\nTechnique: T1068\nTactic: Privilege Escalation\n\nSource IP: 193.56.28.14\nDestination URL: https://example.com\nFile Hash: 275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f\n\nThreat Intelligence Results\n---------------------------\nIP Reputation Score: 3\nFile Hash Score: 65\nURL Reputation Score: 0\nAverage Risk Score: 22.67\n\nRecommended Actions\n-------------------\n• Validate IOC against additional threat intelligence sources.\n• Block malicious IP, URL, and hash if confirmed.\n• Investigate affected endpoint and user activity.\n• Collect endpoint evidence if required.\n• Continue monitoring for additional indicators.\n\nGenerated automatically by Tines SOAR Pipeline."
+    },
+    "status": 201,
+    "meta": {
+      "response_time": 0.260878289,
+      "duration": 0.373434451
+    }
+  }
+}
+```
+
+> **Note:** The workflow for benign events remains identical to malicious events. The only difference is that the reputation scores returned by **VirusTotal** and **URLScan** are **0**, resulting in an average risk score of **0**. Based on this score, the workflow follows the **Benign** path instead of the **Malicious** path.
+
+---
+
+## Event Transform
+
+### Combines the reputation scores collected from VirusTotal and URLScan into a single record and forwards it to the next step for overall risk score calculation.
+
+### Event Output
+
+```json
+{
+  "event_transform": {
+    "records": [
+      {
+        "fields": {
+          "alert_id": "ALERT-COMM-1785605281",
+          "source_ip": "140.82.114.3",
+          "destination_url": "https://github.com",
+          "file_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "ip_score": "0",
+          "hash_score": "0",
+          "url_score": "0",
+          "average": 0,
+          "processed": false
+        }
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Run Script
+
+### Calculates the overall IOC risk score by averaging the IP, File Hash, and URL reputation scores. Since all reputation scores are **0**, the calculated average risk score is also **0**, causing the workflow to continue through the **Benign** branch.
+
+### Event Output
+
+```json
+{
+  "run_script": {
+    "output": {
+      "ip_score": 0,
+      "hash_score": 0,
+      "url_score": 0,
+      "average": 0
+    }
+  }
+}
+```
+
+## Condition
+
+### Evaluates the calculated average risk score against the configured threshold. Since the average risk score is **0**, the condition is **not matched**, and the workflow follows the **Benign** path.
+
+### Event Output
+
+```json
+{
+  "condition": {
+    "rule_matched": false,
+    "rule_results": [
+      {
+        "type": "field>value",
+        "path": "<<run_script.output.average>>",
+        "matched": false,
+        "field": "0.0",
+        "value": "0"
+      }
+    ]
+  }
+}
+```
+
+## Create an Issue with Atlassian Document Format - Benign
+
+### Creates a new Jira issue to document the **benign** security event, allowing analysts to maintain an audit trail and verify that the IOC was analyzed and determined to be non-malicious.
+
+### Event Output
+
+```json
+{
+  "create_an_issue_with_atlassian_document_format": {
+    "body": {
+      "id": "10408",
+      "key": "KAN-143",
+      "self": "https://dhaneshkumarcyber.atlassian.net/rest/api/3/issue/10408"
+    },
+    "status": 201,
+    "meta": {
+      "response_time": 0.740907652,
+      "duration": 0.843006726
+    }
+  }
+}
+```
+
+## Add Issue Comment with Jira Markdown - Benign
+
+### Adds a detailed **Benign IOC verification report** as a comment to the Jira issue, documenting the analysis results, threat intelligence findings, MITRE ATT&CK mapping, and analyst recommendations. This provides a complete audit trail confirming that the submitted IOC was verified as **non-malicious**.
+
+### Event Output
+
+```json
+{
+  "add_issue_comment_with_jira_markdown": {
+    "body": {
+      "id": "10697",
+      "self": "https://dhaneshkumarcyber.atlassian.net/rest/api/2/issue/10408/comment/10697",
+      "created": "2026-08-01T22:58:38.153+0530",
+      "updated": "2026-08-01T22:58:38.153+0530",
+      "jsdPublic": true
+    },
+    "status": 201,
+    "meta": {
+      "response_time": 0.23453626,
+      "duration": 0.31525452
+    }
+  }
+}
+```
+
+<img width="1576" height="804" alt="image" src="https://github.com/user-attachments/assets/b908b967-f1b6-4b1c-97e8-678f79f6eb83" />
+
+# Challenges Faced
+
+Throughout the development of this SOAR pipeline, several technical and workflow-related issues were encountered while integrating **Python**, **Tines**, **VirusTotal**, **URLScan**, and **Jira**. Each issue required troubleshooting, validation, and testing before the workflow functioned correctly. The following sections document every major challenge, its root cause, and the implemented solution.
+
+---
+
+## 1. Story Not Published (HTTP 422)
+
+### Problem
+
+The Python script successfully sent the alert to the Tines webhook, but Tines returned an **HTTP 422** response and the workflow never started.
+
+### Cause
+
+Although the Story had been created successfully, it was still in **Draft** mode. Tines does not allow webhook-triggered execution unless the Story is published.
+
+### Solution
+
+The Story was published from the Tines dashboard. Once published, the webhook immediately started accepting events and returned **HTTP 201 (Created)**.
+
+---
+
+## 2. VirusTotal Authentication Failed (HTTP 401)
+
+### Problem
+
+Every VirusTotal request failed with **401 Unauthorized**, preventing IOC reputation checks.
+
+### Cause
+
+The VirusTotal API key was either missing, invalid, or incorrectly configured inside the HTTP Request action.
+
+### Solution
+
+A valid VirusTotal API key was generated and stored securely using **Tines Credentials**. The API key was then passed using the required:
+
+```http
+x-apikey: <VirusTotal_API_Key>
+```
+
+header.
+
+After updating the credential, VirusTotal returned successful responses.
+
+---
+
+## 3. URLScan Authentication Failed
+
+### Problem
+
+URLScan rejected every scan submission and returned an authentication error.
+
+### Cause
+
+The URLScan API key was missing from the request header.
+
+### Solution
+
+The URLScan API key was added using Tines Credentials and included as:
+
+```http
+API-Key: <URLScan_API_Key>
+```
+
+After configuring the correct header, URL submissions completed successfully.
+
+---
+
+## 4. Jira Authentication and Permissions
+
+### Problem
+
+Jira actions failed while creating issues or adding comments.
+
+### Cause
+
+The Jira credentials were either incomplete or lacked sufficient permissions.
+
+### Solution
+
+A Jira API Token was generated and configured using:
+
+- Email Address
+- API Token
+- Atlassian Cloud URL
+
+The authenticated account was also verified to have permission to:
+
+- Create Issues
+- Edit Issues
+- Add Comments
+
+---
+
+## 5. Jira Comment Appeared Empty
+
+### Problem
+
+The Jira comment action executed successfully, but the comment contained little or no useful information.
+
+### Cause
+
+The Markdown template referenced incorrect variables or empty fields.
+
+### Solution
+
+The Markdown template was rewritten to reference the correct event variables, including:
+
+- Alert ID
+- IOC values
+- Reputation scores
+- MITRE ATT&CK mapping
+- Analyst recommendations
+
+The comment now generates a complete incident report automatically.
+
+---
+
+## 6. Incorrect Jira Issue Key
+
+### Problem
+
+The comment action failed because Jira could not locate the target issue.
+
+### Cause
+
+The workflow referenced a hardcoded issue key instead of dynamically using the issue created during execution.
+
+### Solution
+
+The workflow was modified to reference:
+
+```text
+create_an_issue_with_atlassian_document_format.body.key
+```
+
+This ensures comments are always added to the newly created Jira ticket.
+
+---
+
+## 7. Incorrect VirusTotal API Endpoint
+
+### Problem
+
+VirusTotal returned **404 Not Found** during IOC lookups.
+
+### Cause
+
+The workflow called an incorrect API endpoint for file hash analysis.
+
+### Solution
+
+Separate endpoints were configured correctly:
+
+**IP Reputation**
+
+```text
+/api/v3/ip_addresses/{ip}
+```
+
+**File Reputation**
+
+```text
+/api/v3/files/{hash}
+```
+
+Each IOC type now uses its dedicated endpoint.
+
+---
+
+## 8. Invalid IOC Values
+
+### Problem
+
+Several IOC lookups failed unexpectedly.
+
+### Cause
+
+The submitted IOC values were invalid or unsupported.
+
+Examples included:
+
+- Invalid domains
+- Incorrect URLs
+- Malformed IP addresses
+
+### Solution
+
+Valid IOC samples were collected and tested before integrating them into the pipeline.
+
+---
+
+## 9. File Hash Not Found
+
+### Problem
+
+VirusTotal returned no meaningful results for some file hashes.
+
+### Cause
+
+Certain hashes had never been analyzed by VirusTotal.
+
+### Solution
+
+Known public hashes with existing VirusTotal analysis were used during testing to ensure consistent results.
+
+---
+
+## 10. Python Indentation Errors
+
+### Problem
+
+The Python alert generator failed to execute.
+
+### Cause
+
+Incorrect indentation and inconsistent spacing produced Python syntax errors.
+
+### Solution
+
+The script was reformatted using consistent indentation, variables were reorganized, and repeated testing was performed until execution completed successfully.
+
+---
+
+## 11. Tines Expression Errors
+
+### Problem
+
+Several Tines actions returned empty values or failed to access event fields.
+
+### Cause
+
+Expressions referenced incorrect JSON paths.
+
+Examples:
+
+```text
+webhook.body.details.source_ip
+```
+
+instead of an incorrect nested path.
+
+### Solution
+
+Each action was updated to use the correct Tines expression syntax, ensuring every IOC value propagated correctly through the workflow.
+
+---
+
+## 12. Average Risk Score Calculation
+
+### Problem
+
+The workflow initially could not determine whether an alert should be classified as malicious or benign.
+
+### Cause
+
+Individual IOC scores existed independently without a unified risk calculation.
+
+### Solution
+
+A Python Script Action was added to calculate:
+
+```text
+Average Score =
+(IP Score + URL Score + Hash Score) / 3
+```
+
+This average score became the decision point for the Condition action.
+
+---
+
+## 13. Benign Workflow Logic
+
+### Problem
+
+The workflow originally focused only on malicious events.
+
+### Cause
+
+No dedicated process existed for clean indicators.
+
+### Solution
+
+A separate benign workflow was implemented to:
+
+- Create a Jira issue
+- Generate a Benign IOC Verification Report
+- Document clean reputation results
+- Recommend continued monitoring
+
+---
+
+## 14. Malicious Workflow Logic
+
+### Problem
+
+Malicious indicators required additional investigation details.
+
+### Cause
+
+The initial workflow only created a Jira ticket.
+
+### Solution
+
+The malicious branch was expanded to include:
+
+- IOC reputation scores
+- Average risk score
+- MITRE ATT&CK mapping
+- Analyst recommendations
+- Detailed investigation comments
+
+This provides analysts with immediate context for incident response.
+
+---
+
+## 15. MITRE ATT&CK Mapping
+
+### Problem
+
+Security events lacked ATT&CK context.
+
+### Cause
+
+MITRE technique and tactic values were not included in the generated alerts.
+
+### Solution
+
+Each event type was mapped to the appropriate ATT&CK Technique and Tactic before being forwarded to Tines.
+
+Examples include:
+
+- T1566 – Phishing
+- T1068 – Privilege Escalation
+- T1071 – Command and Control
+
+These values are automatically included in the Jira report.
+
+---
+
+## 16. URLScan Processing Delay
+
+### Problem
+
+Immediately requesting scan results after URL submission often returned incomplete or unavailable data.
+
+### Cause
+
+URLScan requires several seconds to complete the website analysis before results become available.
+
+### Solution
+
+An **Event Transform** action was added to introduce a delay before retrieving the scan result, ensuring URLScan had sufficient time to complete the analysis.
+
+---
+
+## 17. API Rate Limits
+
+### Problem
+
+VirusTotal, URLScan, and Jira enforce API request limits.
+
+### Cause
+
+Excessive API requests within a short period can result in temporary request throttling.
+
+### Solution
+
+The workflow was designed to:
+
+- Submit only one request per IOC
+- Avoid duplicate API calls
+- Use delays where required
+- Monitor API response headers for remaining request limits
+
+This prevents unnecessary API throttling during testing and production use.
+
+---
+
+## Summary
+
+By resolving these challenges, the SOAR pipeline evolved into a fully automated workflow capable of:
+
+- Receiving security alerts
+- Validating IPs, URLs, and file hashes
+- Calculating IOC risk scores
+- Distinguishing between benign and malicious events
+- Creating Jira incidents automatically
+- Documenting investigation results
+- Mapping alerts to MITRE ATT&CK
+- Providing analysts with actionable recommendations
+
+Each issue contributed to improving the reliability, automation, and overall effectiveness of the final SOAR implementation.
+
+# Future Enhancements
+
+The current SOAR pipeline successfully automates IOC analysis, threat intelligence enrichment, and Jira incident management. However, additional integrations and features can further improve automation, threat visibility, and incident response efficiency. The following enhancements are planned for future versions of the project.
+
+---
+
+## 1. Slack Integration
+
+### Objective
+
+Integrate Slack to deliver real-time security notifications directly to SOC analysts.
+
+### Benefits
+
+- Instant alert notifications
+- Dedicated incident response channels
+- Faster analyst collaboration
+- Reduced response time
+
+---
+
+## 2. Microsoft Teams Integration
+
+### Objective
+
+Send automated incident notifications to Microsoft Teams for organizations using the Microsoft ecosystem.
+
+### Benefits
+
+- Team-wide alert visibility
+- Automated collaboration
+- Easy sharing of IOC reports
+- Improved communication during investigations
+
+---
+
+## 3. Email Alerts
+
+### Objective
+
+Automatically send email notifications whenever a malicious IOC is detected.
+
+### Benefits
+
+- Immediate analyst notification
+- Executive reporting
+- Incident summaries delivered automatically
+- Backup notification method
+
+---
+
+## 4. MalwareBazaar Integration
+
+### Objective
+
+Query MalwareBazaar to retrieve additional malware intelligence using file hashes.
+
+### Benefits
+
+- Malware family identification
+- Download malware samples for analysis
+- Additional threat context
+- Improved malware investigation
+
+---
+
+## 5. AbuseIPDB Integration
+
+### Objective
+
+Validate IP addresses against AbuseIPDB to determine abuse confidence scores.
+
+### Benefits
+
+- IP abuse history
+- Community-reported malicious activity
+- Higher confidence in IOC validation
+- Better IP reputation scoring
+
+---
+
+## 6. AlienVault OTX Integration
+
+### Objective
+
+Enrich IOC data using AlienVault Open Threat Exchange.
+
+### Benefits
+
+- Community threat intelligence
+- Additional IOC indicators
+- Threat pulse correlation
+- Improved enrichment results
+
+---
+
+## 7. Hybrid Analysis Integration
+
+### Objective
+
+Automatically submit suspicious files to Hybrid Analysis for sandbox execution.
+
+### Benefits
+
+- Dynamic malware analysis
+- Behavioral indicators
+- Network activity reports
+- Malware capability identification
+
+---
+
+## 8. MISP Integration
+
+### Objective
+
+Integrate the Malware Information Sharing Platform (MISP) for centralized threat intelligence sharing.
+
+### Benefits
+
+- IOC sharing
+- Threat intelligence collaboration
+- Community-driven detection
+- Enterprise threat feeds
+
+---
+
+## 9. Interactive Dashboard
+
+### Objective
+
+Develop a centralized dashboard to monitor all processed alerts and incidents.
+
+### Benefits
+
+- Real-time workflow monitoring
+- IOC statistics
+- Incident trends
+- Analyst performance metrics
+- Visual reporting
+
+---
+
+## 10. SIEM Integration
+
+### Objective
+
+Integrate the SOAR pipeline directly with enterprise SIEM platforms.
+
+### Possible Integrations
+
+- Microsoft Sentinel
+- Splunk Enterprise Security
+- IBM QRadar
+- Sumo Logic Cloud SIEM
+- Elastic Security
+
+### Benefits
+
+- Automatic alert ingestion
+- End-to-end incident automation
+- Faster detection and response
+- Reduced manual effort
+
+---
+
+## 11. IOC Database
+
+### Objective
+
+Maintain a centralized IOC database containing previously analyzed indicators.
+
+### Benefits
+
+- Prevent duplicate analysis
+- Faster IOC lookups
+- Historical reputation tracking
+- Improved investigation efficiency
+
+---
+
+## 12. Threat Intelligence Correlation
+
+### Objective
+
+Correlate IOC information across multiple threat intelligence platforms before generating a verdict.
+
+### Possible Sources
+
+- VirusTotal
+- URLScan
+- AbuseIPDB
+- AlienVault OTX
+- MalwareBazaar
+- Hybrid Analysis
+
+### Benefits
+
+- Higher confidence scoring
+- Reduced false positives
+- More accurate threat classification
+- Better analyst decision-making
+
+---
+
+## 13. Automated Response Actions
+
+### Objective
+
+Automatically perform containment actions when high-confidence malicious IOCs are detected.
+
+### Possible Actions
+
+- Block malicious IP addresses
+- Block malicious domains
+- Quarantine affected endpoints
+- Disable compromised user accounts
+- Trigger firewall rules
+- Isolate infected hosts
+
+### Benefits
+
+- Faster incident containment
+- Reduced analyst workload
+- Improved response time
+- Enhanced security posture
+
+---
+
+## 14. IOC Whitelisting and Exception Management
+
+### Objective
+
+Maintain trusted IPs, domains, and file hashes to avoid repeated analysis of known benign indicators.
+
+### Benefits
+
+- Reduced false positives
+- Faster processing
+- Improved workflow efficiency
+- Simplified IOC management
+
+---
+
+## 15. Reporting and Analytics
+
+### Objective
+
+Generate automated incident reports summarizing workflow activity and threat statistics.
+
+### Possible Reports
+
+- Daily SOC report
+- Weekly threat summary
+- Monthly incident statistics
+- IOC trend analysis
+- Analyst activity reports
+
+### Benefits
+
+- Executive visibility
+- Compliance reporting
+- Performance tracking
+- Better decision-making
+
+---
+
+# Conclusion
+
+### **Project Author:** Dhanesh Kumar  
+### **Role:** Cybersecurity Fresher
+
+### This SOAR project has been one of the most valuable hands-on cybersecurity projects I have built during my learning journey. It combines security automation, threat intelligence, IOC enrichment, and incident management into a single automated workflow, demonstrating how modern Security Operations Centers (SOCs) reduce manual effort and improve response times.
+
+### Throughout this project, I learned how to build an end-to-end SOAR pipeline using Tines, integrate multiple security platforms through APIs, automate IOC analysis using VirusTotal and URLScan, calculate risk scores with custom Python scripts, and automatically create and update Jira incidents based on threat intelligence results.
+
+### One of the biggest learning experiences was troubleshooting real-world integration issues. I resolved authentication errors, incorrect API endpoints, invalid IOC handling, expression mapping problems, workflow logic issues, Jira integration errors, Python scripting problems, and data transformation challenges. Solving these issues provided practical experience similar to what security analysts encounter in enterprise environments.
+
+### This project also strengthened my understanding of REST APIs, JSON data handling, security automation, incident response workflows, MITRE ATT&CK mapping, IOC reputation analysis, and automated ticket management. It demonstrated how multiple security tools can work together to automate repetitive SOC operations while ensuring accurate threat analysis.
+
+### From an enterprise perspective, this workflow can significantly reduce analyst workload by automatically enriching indicators, calculating threat severity, creating incident tickets, documenting investigation results, and distinguishing between malicious and benign events without requiring manual intervention.
+
+### Although this implementation serves as a proof-of-concept, the overall architecture is scalable and can be expanded with additional threat intelligence sources, communication platforms, SIEM integrations, dashboards, and advanced response actions to support real-world enterprise SOC environments.
+
+### As a Cybersecurity Fresher, successfully designing, building, troubleshooting, and documenting this complete SOAR automation pipeline has been an amazing learning experience. It has strengthened both my technical skills and my understanding of real-world security operations, while providing a strong foundation for future cybersecurity and SOC Analyst roles.
+
+## References
+
+- ### [Tines Documentation](https://tines.com)
+- ### [VirusTotal API Documentation](https://virustotal.com)
+- ### [URLScan Documentation](https://urlscan.io)
+- ### [Jira REST API Documentation](https://atlassian.com)
+- ### [MITRE ATT&CK Framework](https://mitre.org)
+- ### [Python Documentation](https://python.org)
+
+
+# "Automation is not about replacing human intelligence; it is about scaling human capability against endless threats."
 
